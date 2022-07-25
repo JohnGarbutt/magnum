@@ -1,0 +1,29 @@
+---
+# Helm values for
+# https://stackhpc.github.io/capi-helm-charts/openstack-cluster-0.1.0.tgz
+# or something else that supports the same interface
+
+# From the template
+kubernetesVersion: "{{ template.labels.get('kube_tag') }}"
+machineImage: "{{ template.image_id | urlencode }}"
+
+# Cluster specific, or inherited
+cloudCredentialsSecretName: "project-{{ cluster.project_id }}"
+
+controlPlane:
+  # TODO: check at least 2 CPU, 4GB RAM
+  machineFlavor: "{{ cluster.master_flavor_id | urlencode }}"
+  machineCount: 3
+
+nodeGroups:
+  - name: default
+    machineFlavor: "{{ cluster.flavor_id | urlencode }}"
+    machineCount: {{ cluster.node_count }}
+    autoscale: false
+    # machineCountMin
+    # machineCountMax
+  {%- for ng in cluster.nodegroups %}{% if not ng.is_default %}
+  - name: "{{ ng.uuid }}"
+    machineFlavor: "{{ ng.flavor_id | urlencode }}"
+    machineCount: {{ ng.node_count }}
+    autoscale: false{% endif %}{% endfor %}
