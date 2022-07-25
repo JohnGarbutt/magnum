@@ -1,0 +1,12 @@
+---
+apiVersion: azimuth.stackhpc.com/v1alpha1
+kind: ClusterTemplate
+metadata:
+  name: "{{ template.uuid | urlencode }}"
+spec:
+  deprecated: "{{ template.hidden }}"
+  label: "{{ template.name | urlencode }}"
+  values:
+    global:
+      kubernetesVersion: "{{ template.labels.get('kube_tag') }}"
+    machineImageId: "{{ template.image_id | urlencode }}"

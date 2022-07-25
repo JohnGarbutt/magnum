@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "cluster-{{ cluster.uuid }}"
+type: Opaque
+stringData:
+  clouds.yaml:
+      clouds:
+          openstack:
+              identity_api_version: 3
+              interface: "public"
+              auth:
+                  auth_url: "{{ auth_url }}"
+                  project_id: "{{ cluster.project_id }}"
+                  trust_id: "{{ cluster.trust_id }}"
+                  username: "{{ cluster.trustee_username }}"
+                  password: "{{ cluster.trustee_password }}"
+---
+apiVersion: azimuth.stackhpc.com/v1alpha1
+kind: Cluster
+metadata:
+  name: "{{ cluster.uuid }}"
+spec:
+  addons:
+    apps: true
+    certManager: false
+    dashboard: true
+    ingress: false
+    monitoring: true
+  autohealing: true
+  cloudCredentialsSecretName: "cluster-{{ cluster.uuid  | urlencode }}"
+  controlPlaneMachineSize: "{{ cluster.master_flavor_id | urlencode }}"
+  label: "{{ cluster.name | urlencode }}"
+  machineRootVolumeSize: 0
+  nodeGroups:
+  - autoscale: false
+    count: "{{ cluster.node_count | urlencode }}"
+    machineSize: "{{ cluster.flavor_id | urlencode }}"
+    name: "default"
+  {%- for ng in cluster.nodegroups %}{% if not ng.is_default %}
+  - autoscale: false
+    count: "{{ ng.node_count | urlencode }}"
+    machineSize: "{{ ng.flavor_id | urlencode }}"
+    name: "{{ ng.name | urlencode }}"
+  {% endif %}{% endfor -%}
+  templateName: "{{ cluster.cluster_template.uuid }}"
