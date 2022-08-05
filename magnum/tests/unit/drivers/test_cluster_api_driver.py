@@ -31,12 +31,6 @@ class ClusterAPIDriverTest(base.DbTestCase):
         self.cluster_obj.refresh()
         self.cluster_template = self.cluster_obj.cluster_template
         self.cluster_template.labels = {'kube_tag': 'v1.24.3'}
-        self.nodegroup_obj = obj_utils.create_test_nodegroup(
-            self.context, name='test_ng"3', cluster_id=self.cluster_obj.uuid,
-            uuid='27e3153e-d5bf-4b7e-b517-fb518e17f34c',
-            project_id=self.cluster_obj.project_id, is_default=False,
-            image_id='test-image1')
-        self.nodegroup_obj.refresh()
 
     @mock.patch.object(driver.Driver, "_generate_resources")
     @mock.patch.object(driver.Driver, "_apply_resources")
@@ -99,17 +93,24 @@ spec:
   machineRootVolumeSize: 0
   nodeGroups:
   - autoscale: false
-    count: "6"
-    machineSize: "None"
-    name: "default"
-  - autoscale: false
     count: "3"
     machineSize: "None"
-    name: "test_ng%223"
+    name: "default"
   templateName: "e74c40e0-d825-11e2-a28f-0800200c9a66"'''
         self.assertEqual(expected, actual)
 
-    def test_generate_resources_with_template(self):
+    def test_generate_resources_with_template_and_node_group(self):
+        # TODO: why is the default group count 9 not 3?
+        obj_utils.create_test_nodegroup(
+            self.context, name='test_ng"3', cluster_id=self.cluster_obj.uuid,
+            uuid='27e3153e-d5bf-4b7e-b517-fb518e17f34c',
+            project_id=self.cluster_obj.project_id, is_default=False,
+            image_id='test-image3')
+        obj_utils.create_test_nodegroup(
+            self.context, name='test_asdf', cluster_id=self.cluster_obj.uuid,
+            uuid='17e3153e-d5bf-4b7e-b517-fb518e17f34d',
+            project_id=self.cluster_obj.project_id, is_default=False,
+            image_id='test-image2', id="3")
         actual = self.driver._generate_resources(
             self.context, self.cluster_obj, self.cluster_template)
         expected = '''---
@@ -161,9 +162,13 @@ spec:
   machineRootVolumeSize: 0
   nodeGroups:
   - autoscale: false
-    count: "6"
+    count: "9"
     machineSize: "None"
     name: "default"
+  - autoscale: false
+    count: "3"
+    machineSize: "None"
+    name: "test_asdf"
   - autoscale: false
     count: "3"
     machineSize: "None"

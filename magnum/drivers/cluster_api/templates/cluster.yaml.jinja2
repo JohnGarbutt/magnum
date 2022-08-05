@@ -42,6 +42,5 @@ spec:
   - autoscale: false
     count: "{{ ng.node_count | urlencode }}"
     machineSize: "{{ ng.flavor_id | urlencode }}"
-    name: "{{ ng.name | urlencode }}"
-  {% endif %}{% endfor -%}
+    name: "{{ ng.name | urlencode }}"{% endif %}{% endfor %}
   templateName: "{{ cluster.cluster_template.uuid }}"
