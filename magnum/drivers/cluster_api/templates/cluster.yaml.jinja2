@@ -29,18 +29,18 @@ spec:
     ingress: false
     monitoring: true
   autohealing: true
-  cloudCredentialsSecretName: "cluster-{{ cluster.uuid  | urlencode }}"
+  cloudCredentialsSecretName: "cluster-{{ cluster.uuid }}"
   controlPlaneMachineSize: "{{ cluster.master_flavor_id | urlencode }}"
-  label: "{{ cluster.name | urlencode }}"
+  label: "{{ cluster.uuid }}"
   machineRootVolumeSize: 0
   nodeGroups:
   - autoscale: false
-    count: {{ cluster.node_count | urlencode }}
+    count: {{ cluster.node_count }}
     machineSize: "{{ cluster.flavor_id | urlencode }}"
     name: "default"
   {%- for ng in cluster.nodegroups %}{% if not ng.is_default %}
   - autoscale: false
-    count: {{ ng.node_count | urlencode }}
+    count: {{ ng.node_count }}
     machineSize: "{{ ng.flavor_id | urlencode }}"
-    name: "{{ ng.name | urlencode }}"{% endif %}{% endfor %}
+    name: "{{ ng.uuid }}"{% endif %}{% endfor %}
   templateName: "{{ cluster.cluster_template.uuid }}"
