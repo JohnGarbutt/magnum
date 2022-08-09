@@ -15,6 +15,7 @@ import json
 import pathlib
 
 import jinja2
+from oslo_concurrency import processutils
 from oslo_log import log as logging
 
 from magnum.common import clients
@@ -79,13 +80,13 @@ class Driver(driver.Driver):
             LOG.info("Checking on a delete for %s", cluster.uuid)
             if k8s_status == ClusterStatus.NOT_FOUND:
                 cluster.status = fields.ClusterStatus.DELETE_COMPLETE
-                cluster.status_reason = "cluster is not found"
+                cluster.status_reason = "cluster deleted"
                 cluster.save()
-            if k8s_status == ClusterStatus.ERROR:
-                cluster.status = fields.ClusterStatus.CREATE_FAILED
+            else:
+                # anything else, delete failed, lets go to error
+                cluster.status = fields.ClusterStatus.DELETE_FAILED
                 cluster.status_reason = "cluster is in error state"
                 cluster.save()
-            # otherwise we are still waiting for the delete
             return
 
         # what should we do by default here?
@@ -128,10 +129,16 @@ class Driver(driver.Driver):
         return ClusterStatus.PENDING
 
     def _get_resource(self, resource_type, name):
-        # FIXME(johngarbutt): deal with not found errors
-        stdout, stderr = utils.execute(
-            "kubectl", "get", resource_type, name,
-            "-o", "json", timeout=120)
+        try:
+            stdout, stderr = utils.execute(
+                "kubectl", "get", resource_type, name,
+                "-o", "json", timeout=120)
+        except processutils.ProcessExecutionError as e:
+            if e.exit_code == 1 and "Error from server (NotFound)" in e.stderr:
+                # Return None when we can't find the resource
+                return None
+            raise
+        # try to parse the json response
         return json.loads(stdout)
 
     def _apply_resources(self, resources_string):

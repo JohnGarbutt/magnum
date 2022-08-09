@@ -12,6 +12,8 @@
 
 from unittest import mock
 
+from oslo_concurrency import processutils
+
 from magnum.common import utils
 from magnum.drivers.cluster_api import driver
 from magnum.objects import fields
@@ -227,6 +229,38 @@ spec:
         self.driver.update_cluster_status(self.context, mock_cluster)
 
         self.assertEqual("CREATE_FAILED", mock_cluster.status)
+        self.assertEqual("cluster is in error state",
+                         mock_cluster.status_reason)
+        mock_cluster.save.assert_called_once_with()
+
+    @mock.patch.object(utils, "execute")
+    def test_update_cluster_status_delete_not_found_success(
+            self, mock_execute):
+        mock_execute.side_effect = processutils.ProcessExecutionError(
+            stderr='Error from server (NotFound): '
+                   'clusters.azimuth.stackhpc.com "asdf" not found',
+            exit_code=1)
+        mock_cluster = mock.MagicMock()
+        mock_cluster.uuid = "uuid1"
+        mock_cluster.status = fields.ClusterStatus.DELETE_IN_PROGRESS
+
+        self.driver.update_cluster_status(self.context, mock_cluster)
+
+        self.assertEqual("DELETE_COMPLETE", mock_cluster.status)
+        self.assertEqual("cluster deleted",
+                         mock_cluster.status_reason)
+        mock_cluster.save.assert_called_once_with()
+
+    @mock.patch.object(driver.Driver, "_get_resource")
+    def test_update_cluster_status_delete_failed(self, mock_get):
+        mock_get.return_value = {"status": {"phase": "Ready"}}
+        mock_cluster = mock.MagicMock()
+        mock_cluster.uuid = "uuid1"
+        mock_cluster.status = fields.ClusterStatus.DELETE_IN_PROGRESS
+
+        self.driver.update_cluster_status(self.context, mock_cluster)
+
+        self.assertEqual("DELETE_FAILED", mock_cluster.status)
         self.assertEqual("cluster is in error state",
                          mock_cluster.status_reason)
         mock_cluster.save.assert_called_once_with()
