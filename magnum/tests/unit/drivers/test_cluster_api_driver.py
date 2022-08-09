@@ -93,7 +93,7 @@ spec:
   machineRootVolumeSize: 0
   nodeGroups:
   - autoscale: false
-    count: "3"
+    count: 3
     machineSize: "None"
     name: "default"
   templateName: "e74c40e0-d825-11e2-a28f-0800200c9a66"'''
@@ -163,15 +163,15 @@ spec:
   machineRootVolumeSize: 0
   nodeGroups:
   - autoscale: false
-    count: "9"
+    count: 9
     machineSize: "None"
     name: "default"
   - autoscale: false
-    count: "3"
+    count: 3
     machineSize: "None"
     name: "test_asdf"
   - autoscale: false
-    count: "3"
+    count: 3
     machineSize: "None"
     name: "test_ng%223"
   templateName: "e74c40e0-d825-11e2-a28f-0800200c9a66"'''

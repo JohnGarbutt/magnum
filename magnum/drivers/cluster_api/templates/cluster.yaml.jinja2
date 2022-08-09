@@ -35,12 +35,12 @@ spec:
   machineRootVolumeSize: 0
   nodeGroups:
   - autoscale: false
-    count: "{{ cluster.node_count | urlencode }}"
+    count: {{ cluster.node_count | urlencode }}
     machineSize: "{{ cluster.flavor_id | urlencode }}"
     name: "default"
   {%- for ng in cluster.nodegroups %}{% if not ng.is_default %}
   - autoscale: false
-    count: "{{ ng.node_count | urlencode }}"
+    count: {{ ng.node_count | urlencode }}
     machineSize: "{{ ng.flavor_id | urlencode }}"
     name: "{{ ng.name | urlencode }}"{% endif %}{% endfor %}
   templateName: "{{ cluster.cluster_template.uuid }}"
