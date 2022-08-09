@@ -119,7 +119,7 @@ kind: ClusterTemplate
 metadata:
   name: "e74c40e0-d825-11e2-a28f-0800200c9a66"
 spec:
-  deprecated: "False"
+  deprecated: false
   label: "clustermodel1"
   values:
     global:

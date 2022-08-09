@@ -4,7 +4,7 @@ kind: ClusterTemplate
 metadata:
   name: "{{ template.uuid | urlencode }}"
 spec:
-  deprecated: "{{ template.hidden }}"
+  deprecated: {{ template.hidden | lower }}
   label: "{{ template.name | urlencode }}"
   values:
     global:
