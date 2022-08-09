@@ -100,7 +100,7 @@ spec:
         self.assertEqual(expected, actual)
 
     def test_generate_resources_with_template_and_node_group(self):
-        # TODO: why is the default group count 9 not 3?
+        # TODO(johngarbutt): why is the default group count 9 not 3?
         obj_utils.create_test_nodegroup(
             self.context, name='test_ng"3', cluster_id=self.cluster_obj.uuid,
             uuid='27e3153e-d5bf-4b7e-b517-fb518e17f34c',
