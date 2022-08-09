@@ -143,7 +143,7 @@ class Driver(driver.Driver):
     def _delete_resources(self, resources_string):
         LOG.debug("Delete in k8s: %s", resources_string)
         utils.execute(
-            "kubectl", "delete", "--ignore-not-found=false", "-f", "-",
+            "kubectl", "delete", "--ignore-not-found=true", "-f", "-",
             timeout=120, process_input=resources_string)
 
     def _generate_resources(self, context, cluster, cluster_template=None):

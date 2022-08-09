@@ -242,7 +242,7 @@ spec:
     def test_delete_resources(self, mock_execute):
         self.driver._delete_resources("asdf")
         mock_execute.assert_called_once_with(
-            'kubectl', 'delete', '--ignore-not-found=false', '-f', '-',
+            'kubectl', 'delete', '--ignore-not-found=true', '-f', '-',
             timeout=120, process_input='asdf')
 
     def test_upgrade_raises(self):
