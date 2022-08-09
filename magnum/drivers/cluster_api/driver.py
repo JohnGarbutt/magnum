@@ -183,6 +183,10 @@ class Driver(driver.Driver):
         # usually the stack_id is being set, but we don't use heat
         cluster.stack_id = None
 
+        # TODO(johngarbutt): create an app cred, then upload as a
+        # secret, then remove only after cluster is deleted.
+        # ... but for now we assume there is a pre-existing project
+        # secret
         resources = self._generate_resources(
             context, cluster, cluster.cluster_template)
         self._apply_resources(resources)

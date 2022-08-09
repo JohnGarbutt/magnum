@@ -1,22 +1,4 @@
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: "cluster-{{ cluster.uuid }}"
-type: Opaque
-stringData:
-  clouds.yaml: |
-      clouds:
-          openstack:
-              identity_api_version: 3
-              interface: "public"
-              auth:
-                  auth_url: "{{ auth_url }}"
-                  project_id: "{{ cluster.project_id }}"
-                  trust_id: "{{ cluster.trust_id }}"
-                  username: "{{ cluster.trustee_username }}"
-                  password: "{{ cluster.trustee_password }}"
----
 apiVersion: azimuth.stackhpc.com/v1alpha1
 kind: Cluster
 metadata:
@@ -29,7 +11,7 @@ spec:
     ingress: false
     monitoring: true
   autohealing: true
-  cloudCredentialsSecretName: "cluster-{{ cluster.uuid }}"
+  cloudCredentialsSecretName: "project-{{ cluster.project_id }}"
   controlPlaneMachineSize: "{{ cluster.master_flavor_id | urlencode }}"
   label: "{{ cluster.uuid }}"
   machineRootVolumeSize: 0

@@ -59,24 +59,6 @@ class ClusterAPIDriverTest(base.DbTestCase):
         actual = self.driver._generate_resources(
             self.context, self.cluster_obj)
         expected = '''---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: "cluster-5d12f6fd-a196-4bf0-ae4c-1f639a523a52"
-type: Opaque
-stringData:
-  clouds.yaml: |
-      clouds:
-          openstack:
-              identity_api_version: 3
-              interface: "public"
-              auth:
-                  auth_url: "None"
-                  project_id: "fake_project"
-                  trust_id: "trustid"
-                  username: "user"
-                  password: "pass"
----
 apiVersion: azimuth.stackhpc.com/v1alpha1
 kind: Cluster
 metadata:
@@ -89,7 +71,7 @@ spec:
     ingress: false
     monitoring: true
   autohealing: true
-  cloudCredentialsSecretName: "cluster-5d12f6fd-a196-4bf0-ae4c-1f639a523a52"
+  cloudCredentialsSecretName: "project-fake_project"
   controlPlaneMachineSize: "None"
   label: "5d12f6fd-a196-4bf0-ae4c-1f639a523a52"
   machineRootVolumeSize: 0
@@ -129,24 +111,6 @@ spec:
       kubernetesVersion: "v1.24.3"
     machineImageId: "ubuntu"
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: "cluster-5d12f6fd-a196-4bf0-ae4c-1f639a523a52"
-type: Opaque
-stringData:
-  clouds.yaml: |
-      clouds:
-          openstack:
-              identity_api_version: 3
-              interface: "public"
-              auth:
-                  auth_url: "None"
-                  project_id: "fake_project"
-                  trust_id: "trustid"
-                  username: "user"
-                  password: "pass"
----
 apiVersion: azimuth.stackhpc.com/v1alpha1
 kind: Cluster
 metadata:
@@ -159,7 +123,7 @@ spec:
     ingress: false
     monitoring: true
   autohealing: true
-  cloudCredentialsSecretName: "cluster-5d12f6fd-a196-4bf0-ae4c-1f639a523a52"
+  cloudCredentialsSecretName: "project-fake_project"
   controlPlaneMachineSize: "None"
   label: "5d12f6fd-a196-4bf0-ae4c-1f639a523a52"
   machineRootVolumeSize: 0
