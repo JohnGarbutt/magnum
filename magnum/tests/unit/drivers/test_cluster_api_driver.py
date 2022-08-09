@@ -63,7 +63,7 @@ metadata:
   name: "cluster-5d12f6fd-a196-4bf0-ae4c-1f639a523a52"
 type: Opaque
 stringData:
-  clouds.yaml:
+  clouds.yaml: |
       clouds:
           openstack:
               identity_api_version: 3
@@ -133,7 +133,7 @@ metadata:
   name: "cluster-5d12f6fd-a196-4bf0-ae4c-1f639a523a52"
 type: Opaque
 stringData:
-  clouds.yaml:
+  clouds.yaml: |
       clouds:
           openstack:
               identity_api_version: 3
